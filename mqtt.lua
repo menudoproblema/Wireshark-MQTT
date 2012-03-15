@@ -12,6 +12,9 @@
 -- You should have received a copy of the GNU General Public License
 -- along with mqtt.lua.  If not, see <http://www.gnu.org/licenses/>.
 --
+--
+-- Copyright 2012 Vicente Ruiz Rodríguez <vruiz2.0@gmail.com>. All rights reserved.
+--
 
 do
 	-- Create a new dissector
