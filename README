@@ -1,3 +1,42 @@
-MQTT dissetor for Wireshark
+Wireshark-MQTT
+===========================
 
-Usage: wireshark -X lua_script:mqtt.lua
+MQTT dissetor for Wireshark was developed for debugging
+libemqtt (https://github.com/menudoproblema/libemqtt)
+
+
+
+Usage
+=====
+
+$ wireshark -X lua_script:mqtt.lua
+
+
+
+Example
+=======
+
+MQ Telemetry Transport, Message Type: CONNECT, QoS: 0
+	> Fixed Header
+		0001 .... = Message Type: 0x01
+		.... 0... = DUP Flag: 0
+		.... .00. = QoS Level: 0
+		.... ...0 = Retain: 0
+		Remain Length: 36
+
+	> Variable Header
+		Protocol Name: MQIsdp
+		Protocol Version: 3
+		> Flags
+			1... .... = Username Flag: 1
+			.0.. .... = Password Flag: 0
+			..0. .... = Will Retain Flag: 0
+			...0 0... = Will QoS Flag: 0
+			.... .0.. = Will Flag: 0
+			.... ..1. = Clean Session Flag: 1
+		Keep Alive (secs): 300
+
+	> Payload
+		Client ID: libemqtt pub
+		Username: username
+	
