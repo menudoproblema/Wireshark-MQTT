@@ -19,7 +19,7 @@
 do
 	-- Create a new dissector
 	MQTTPROTO = Proto("MQTT", "MQ Telemetry Transport")
-
+	local bitw = require("bit")
 	local f = MQTTPROTO.fields
 	-- Fix header: byte 1
 	f.message_type = ProtoField.uint8("mqtt.message_type", "Message Type", base.HEX, nil, 0xF0)
@@ -59,6 +59,21 @@ do
 	--
 	f.payload_data = ProtoField.bytes("mqtt.payload", "Payload Data")
 
+	-- decoding of fixed header remaining length
+	-- according to MQTT V3.1
+	function lengthDecode(buffer, offset)
+		local multiplier = 1
+		local value = 0
+		local digit = 0
+		repeat
+			 digit = buffer(offset, 1):uint()
+			 offset = offset + 1
+			 value = value + bitw.band(digit,127) * multiplier
+			 multiplier = multiplier * 128
+		until (bitw.band(digit,128) == 0)
+		return offset, value
+	end
+
 	-- The dissector function
 	function MQTTPROTO.dissector(buffer, pinfo, tree)
 		local msg_types = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }
@@ -78,7 +93,10 @@ do
 		msg_types[14] = "DISCONNECT"
 
 		local msgtype = buffer(0, 1)
-		local remain_length = buffer(1, 1)
+
+		local offset = 1
+		local remain_length =0 
+		offset, remain_length = lengthDecode(buffer, offset)
 
 		local msgindex = msgtype:bitfield(0,4)
 
@@ -94,7 +112,6 @@ do
 
 		fixheader_subtree:add(f.remain_length, remain_length)
 
-		local offset = 2
 		local fixhdr_qos = msgtype:bitfield(5,2)
 		subtree:append_text(", QoS: " .. fixhdr_qos)
 
@@ -169,7 +186,7 @@ do
 
 			local payload_subtree = subtree:add("Payload", nil)
 			-- Data
-			local data_len = remain_length:uint() - (offset - varhdr_init)
+			local data_len = remain_length - (offset - varhdr_init)
 			local data = buffer(offset, data_len)
 			offset = offset + data_len
 			payload_subtree:add(f.publish_data, data)
