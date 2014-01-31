@@ -58,6 +58,7 @@ do
 
 	-- The dissector function
 	function MQTTPROTO.dissector(buffer, pinfo, tree)
+	    pinfo.cols.protocol = "MQTT"
 		local msg_types = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }
 		msg_types[1] = "CONNECT"
 		msg_types[2] = "CONNACK"
@@ -83,6 +84,7 @@ do
 		local fixheader_subtree = subtree:add("Fixed Header", nil)
 
 		subtree:append_text(", Message Type: " .. msg_types[msgindex])
+		pinfo.cols.info:set(msg_types[msgindex])
 
 		fixheader_subtree:add(f.message_type, msgtype)
 		fixheader_subtree:add(f.dup, msgtype)
@@ -191,7 +193,6 @@ do
 				payload_subtree:add(f.subscribe_topic, topic)
 				payload_subtree:add(f.subscribe_qos, qos)
 			end
-
 
 		else
 			if((buffer:len()-offset) > 0) then
