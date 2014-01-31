@@ -58,7 +58,7 @@ do
 
 	-- The dissector function
 	function MQTTPROTO.dissector(buffer, pinfo, tree)
-	    pinfo.cols.protocol = "MQTT"
+		pinfo.cols.protocol = "MQTT"
 		local msg_types = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }
 		msg_types[1] = "CONNECT"
 		msg_types[2] = "CONNACK"
