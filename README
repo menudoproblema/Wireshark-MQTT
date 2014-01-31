@@ -1,7 +1,7 @@
 Wireshark-MQTT
 ===========================
 
-MQTT dissetor for Wireshark was developed for debugging
+MQTT dissector for Wireshark was developed for debugging
 libemqtt (https://github.com/menudoproblema/libemqtt)
 
 
