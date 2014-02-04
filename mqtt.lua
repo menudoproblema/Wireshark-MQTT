@@ -208,8 +208,9 @@ do
 			while(offset < buffer:len()) do
 				local qos = buffer(offset, 1)
 				offset = offset + 1
-				payload_subtree:add(f.subscribe_qos, qos)
+				payload_subtree:add(f.suback_qos, qos)
 			end
+
 		else
 			if((buffer:len()-offset) > 0) then
 				local payload_subtree = subtree:add("Payload", nil)
