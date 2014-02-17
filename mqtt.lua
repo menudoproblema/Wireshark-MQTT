@@ -52,10 +52,13 @@ do
 	f.subscribe_message_id = ProtoField.uint16("mqtt.subscribe.message_id", "Message ID")
 	f.subscribe_topic = ProtoField.string("mqtt.subscribe.topic", "Topic")
 	f.subscribe_qos = ProtoField.uint8("mqtt.subscribe.qos", "QoS")
-	
+
 	-- SubAck
 	f.suback_qos = ProtoField.uint8("mqtt.suback.qos", "QoS")
 
+	-- Suback
+	f.suback_message_id = ProtoField.uint16("mqtt.suback.message_id", "Message ID")
+	f.suback_qos = ProtoField.uint8("mqtt.suback.qos", "QoS")
 	--
 	f.payload_data = ProtoField.bytes("mqtt.payload", "Payload Data")
 
@@ -197,18 +200,18 @@ do
 				payload_subtree:add(f.subscribe_qos, qos)
 			end
 
-		elseif(msgindex == 9) then -- SUBACK
+		elseif(msgindex == 9) then --SUBACK
 			local varheader_subtree = subtree:add("Variable Header", nil)
 
 			local message_id = buffer(offset, 2)
 			offset = offset + 2
-			varheader_subtree:add(f.subscribe_message_id, message_id)
+			varheader_subtree:add(f.suback_message_id, message_id)
 
 			local payload_subtree = subtree:add("Payload", nil)
 			while(offset < buffer:len()) do
 				local qos = buffer(offset, 1)
 				offset = offset + 1
-				payload_subtree:add(f.suback_qos, qos)
+				payload_subtree:add(f.suback_qos, qos);
 			end
 
 		else
