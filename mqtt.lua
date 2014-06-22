@@ -197,7 +197,7 @@ do
 			payload_subtree:add(f.publish_data, data)
 
 
-		elseif(msgindex == 8) then -- SUBSCRIBE
+		elseif(msgindex == 8 or msgindex == 10) then -- SUBSCRIBE & UNSUBSCRIBE
 			local varheader_subtree = subtree:add("Variable Header", nil)
 
 			local message_id = buffer(offset, 2)
@@ -214,10 +214,12 @@ do
 				offset = offset + 1
 
 				payload_subtree:add(f.subscribe_topic, topic)
-				payload_subtree:add(f.subscribe_qos, qos)
+				if(msgindex == 8) -- QoS byte only for subscription
+					payload_subtree:add(f.subscribe_qos, qos)
+				end
 			end
 
-		elseif(msgindex == 9) then --SUBACK
+		elseif(msgindex == 9 or msgindex == 11) then -- SUBACK & UNSUBACK
 			local varheader_subtree = subtree:add("Variable Header", nil)
 
 			local message_id = buffer(offset, 2)
