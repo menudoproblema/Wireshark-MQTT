@@ -214,7 +214,7 @@ do
 				offset = offset + 1
 
 				payload_subtree:add(f.subscribe_topic, topic)
-				if(msgindex == 8) -- QoS byte only for subscription
+				if(msgindex == 8) then -- QoS byte only for subscription
 					payload_subtree:add(f.subscribe_qos, qos)
 				end
 			end
