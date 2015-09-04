@@ -79,6 +79,23 @@ do
 
 	-- The dissector function
 	function MQTTPROTO.dissector(buffer, pinfo, tree)
+		-- do TCP reassembly
+		local i = 0
+		repeat
+			if buffer:len() - i >= 2 then  -- we need at least two bytes
+				i = i + lengthDecode(buffer, 1)
+				if i > buffer:len() then
+				    -- we don't have all the data we need yet
+				    pinfo.desegment_len = i - buffer:len() 
+				    return
+				end
+			else
+				-- we don't have all of length field yet
+				pinfo.desegment_len = DESEGMENT_ONE_MORE_SEGMENT 
+				return
+			end
+		until i >= buffer:len()
+
 		pinfo.cols.protocol = "MQTT"
 		local msg_types = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 }
 		msg_types[1] = "CONNECT"
